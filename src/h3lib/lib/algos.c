@@ -33,6 +33,10 @@
 #include "stackAlloc.h"
 #include "vertexGraph.h"
 
+#ifdef HAVE_OPENMP
+#include <omp.h>
+#endif
+
 /*
  * Return codes from hexRange and related functions.
  */
@@ -685,6 +689,10 @@ void H3_EXPORT(polyfill)(const GeoPolygon* geoPolygon, int res, H3Index* out) {
 
     // Next we iterate through each hexagon, and test its center point to see if
     // it's contained in the GeoJSON-like struct
+#ifdef HAVE_OPENMP
+    #pragma omp parallel
+    #pragma omp for
+#endif
     for (int i = 0; i < numHexagons; i++) {
         // Skip records that are already zeroed
         if (out[i] == 0) {
